@@ -1,10 +1,15 @@
 const Database = require('./database');
-const Config = require('./config');
+let Config
 const Router = require('./router')
 const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
 (async function (){
+  let mod = process.argv[1]
+  if(mod === 'development')
+    Config = require('./config.development.js')
+  else if(mod === 'production')
+    Config = require('./config.production.js')
   const RouterBaseDir = path.resolve(__dirname, 'Route')
   console.info("Loading Models....")
   const Model = await Database(Config.database);

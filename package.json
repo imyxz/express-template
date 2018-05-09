@@ -4,14 +4,15 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "node app.js"
+    "dev": "node app.js development",
+    "start": "node app.js production"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imyxz/express-template.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/imyxz/express-template/issues"
   },

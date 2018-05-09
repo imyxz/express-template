@@ -86,7 +86,8 @@ let exp = async function (DBConfig) {
   sequelize = ConnectDB(DBConfig)
   definations = await LoadDefination(path.resolve(__dirname, 'Model', 'Defination'), sequelize)
   models = await LoadModel(path.resolve(__dirname, 'Model'), definations)
-  AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definations)
+  if(contest.Config.dev.hotSwapping === true)
+    AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definations)
   return models;
 }
 module.exports = exp

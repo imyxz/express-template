@@ -145,9 +145,10 @@ async function LoadRouter(BasePath, context) {
   return [baseRouter, tree]
 }
 module.exports = async function (baseDir, context) {
-  let routes = await LoadRouter(baseDir, context)
+  let routes = await LoadRouter(baseDir, context)//[router, tree]
   routeTree = routes[1]
-  await AddHotSwappingForRoutes(baseDir, context, routeTree)
+  if(contest.Config.dev.hotSwapping === true)
+    await AddHotSwappingForRoutes(baseDir, context, routeTree)
   let retRouter = express.Router() //Add a router at root to enable /index.js hot swapping
   retRouter.use('/', (req, res, next) => {
     return routeTree.root(req, res, next)

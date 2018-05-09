@@ -1,6 +1,6 @@
 module.exports = {
   server:{
-    port: '3876'
+    port: 3876
   },
   database: {
     username: '',
@@ -10,5 +10,8 @@ module.exports = {
   },
   env: {
     JWTKEY: ''
+  },
+  dev: {
+    hotSwap: false
   }
 }
