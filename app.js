@@ -15,7 +15,7 @@ const path = require('path');
   }
   console.info("Loading Routes....")
   let [router, routerTree] = await Router(RouterBaseDir, context)
-  console.info(JSON.stringify(routerTree,null,2))
+  console.info(routerTree)
   console.info("Done!\n")
   let app = express()
   app.use('/', router)
