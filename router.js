@@ -101,6 +101,7 @@ async function AddHotSwappingForRoutes(dir, context, _routeTree) {
       dynamicReloadRoute(dir, filepath, event, context, _routeTree).then(e => {
         console.info('Done!')
       }).catch(e => {
+        console.error(`Error while updating ${filepath}`)
         console.error(e)
       })
     }

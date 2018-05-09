@@ -49,24 +49,17 @@ async function LoadModel(dir, _definations) {
 }
 
 function dynamicReloadModel(modelpath, _models, _definations) {
-  console.info('Updating Model ' + modelpath)
   let name = path.basename(modelpath, '.js')
-  try {
-    hotSwapping.cleanRequireCache(modelpath)
-    if (fs.existsSync(modelpath)) {
-      let factory = require(modelpath)
-      let model = factory(_definations)
-      _models[name] = model
-    } else {
-      _models[name] = null
-    }
-
-    console.info('Done!')
-  } catch (e) {
-    console.error('Error while updating Model ' + modelpath)
-    console.error(e)
+  hotSwapping.cleanRequireCache(modelpath)
+  if (fs.existsSync(modelpath)) {
+    let factory = require(modelpath)
+    let model = factory(_definations)
+    _models[name] = model
+  } else {
+    _models[name] = null
   }
 }
+
 function AddHotSwappingForModels(dir, _models, _definations) {
   let watcher = chokidar.watch(dir, {
     persistent: true,
@@ -74,8 +67,17 @@ function AddHotSwappingForModels(dir, _models, _definations) {
     depth: 1
   })
   watcher.on('all', (event, filepath) => {
-    if(path.extname(filepath) === '.js')
-      dynamicReloadModel(filepath, _models, _definations)
+    if (path.extname(filepath) === '.js')
+    {
+      console.info(`Updating Model ${filepath}...`)
+      try{
+        dynamicReloadModel(filepath, _models, _definations)
+        
+      }catch(e){
+        console.error(`Error while updating ${filepath}`)
+        console.error(e)
+      }
+    }
   })
 }
 let exp = async function (DBConfig) {
