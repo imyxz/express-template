@@ -13,7 +13,7 @@ For example, the structure of the example is
 | index.js
 |- welcome.js
 |- v1
-|--- example.js
+|-- example.js
 ```
 
 And have three accessible url:
