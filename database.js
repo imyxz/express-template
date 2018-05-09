@@ -64,7 +64,7 @@ function AddHotSwappingForModels(dir, _models, _definations) {
   let watcher = chokidar.watch(dir, {
     persistent: true,
     ignoreInitial: true,
-    depth: 1
+    depth: 0
   })
   watcher.on('all', (event, filepath) => {
     if (path.extname(filepath) === '.js')
@@ -72,7 +72,7 @@ function AddHotSwappingForModels(dir, _models, _definations) {
       console.info(`Updating Model ${filepath}...`)
       try{
         dynamicReloadModel(filepath, _models, _definations)
-        
+        console.info('Done!')
       }catch(e){
         console.error(`Error while updating ${filepath}`)
         console.error(e)
@@ -80,13 +80,14 @@ function AddHotSwappingForModels(dir, _models, _definations) {
     }
   })
 }
-let exp = async function (DBConfig) {
+let exp = async function (Config) {
+  let DBConfig = Config.database
   if (models !== undefined)
     return models;
   sequelize = ConnectDB(DBConfig)
   definations = await LoadDefination(path.resolve(__dirname, 'Model', 'Defination'), sequelize)
   models = await LoadModel(path.resolve(__dirname, 'Model'), definations)
-  if(contest.Config.dev.hotSwapping === true)
+  if(Config.dev.hotSwap === true)
     AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definations)
   return models;
 }
