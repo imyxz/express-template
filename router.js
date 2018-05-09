@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const chokidar = require('chokidar');
 const hotSwapping = require('./hotSwapping');
+let EnableHotSwapping
 let routeTree
 async function readdirFiles(Path) {
   let files = await fs.readdir(Path)
@@ -126,28 +127,37 @@ async function LoadRouter(BasePath, context) {
   files.filter(e => path.extname(e) === '.js' && e !== 'index.js').forEach(e => {
     let subRouter = require(path.resolve(BasePath, e))(context)
     tree.processor[e] = subRouter
-    baseRouter.use('/', (req, res, next) => {
-      return tree.processor[e](req, res, next)
-    })
+    if (EnableHotSwapping) {
+      baseRouter.use('/', (req, res, next) => {
+        return tree.processor[e](req, res, next)
+      })
+    } else {
+      baseRouter.use('/', tree.processor[e])
+    }
+
 
   })
   let promises = dirs.map(e => {
     return LoadRouter(path.resolve(BasePath, e), context).then(subRet => {
       let [subRouter, subTree] = subRet
       tree.childs[e] = subTree
-      baseRouter.use(`/${e}/`, (req, res, next) => {
-        return tree.childs[e].root(req, res, next) //subRouter = subTree.root
-      })
-
+      if (EnableHotSwapping) {
+        baseRouter.use(`/${e}/`, (req, res, next) => {
+          return tree.childs[e].root(req, res, next) //subRouter = subTree.root
+        })
+      } else {
+        baseRouter.use(`/${e}/`, tree.childs[e].root)
+      }
     })
   })
   await Promise.all(promises)
   return [baseRouter, tree]
 }
 module.exports = async function (baseDir, context) {
-  let routes = await LoadRouter(baseDir, context)//[router, tree]
+  let routes = await LoadRouter(baseDir, context) //[router, tree]
   routeTree = routes[1]
-  if(context.Config.dev.hotSwap === true)
+  EnableHotSwapping = context.Config.dev.hotSwap
+  if (EnableHotSwapping === true)
     await AddHotSwappingForRoutes(baseDir, context, routeTree)
   let retRouter = express.Router() //Add a router at root to enable /index.js hot swapping
   retRouter.use('/', (req, res, next) => {
