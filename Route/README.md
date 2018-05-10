@@ -7,6 +7,8 @@ In each directory if there is a route file named `index.js`, the other route fil
 
 So if you need to use middleware for a bundle of route files, you should define it in `index.js`
 
+If the directory name starts with `_`, the loader will replace it with `:` and pass it to `express`, which makes you could set params in the url.
+
 For example, the structure of the example is
 
 ```
@@ -14,14 +16,18 @@ For example, the structure of the example is
 |- welcome.js
 |- v1
 |-- example.js
+|-- :userId
+|--- example.js
 ```
 
-And have three accessible url:
+And have four accessible url:
 
 1. `/`
 
 2. `/vistors`
 
 3. `/v1/date`
+
+4. `/v1/:userId/space`
 
 All of them has middleware defined in `/index.js`

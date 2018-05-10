@@ -1,9 +1,4 @@
-const express = require('express')
-module.exports = ({
-  Model,
-  Config
-}) => {
-  const router = express.Router()
+module.exports = (router, {Model, Config}) => {
   router.get('/', (req, res) => {
     res.send("Hello World!")
   })
@@ -11,5 +6,4 @@ module.exports = ({
     let result = await Model.example.getVistors()
     res.send(JSON.stringify(result, null, 2))
   })
-  return router
 }

@@ -5,6 +5,18 @@ const chokidar = require('chokidar');
 const hotSwapping = require('./hotSwapping');
 let EnableHotSwapping
 let routeTree
+
+function getRouterInstance() {
+  return express.Router({
+    mergeParams: true
+  })
+}
+
+function dirNameProcessor(dirname) {
+  if (dirname.charAt(0) === '_')
+    return ':' + dirname.substr(1)
+  return dirname
+}
 async function readdirFiles(Path) {
   let files = await fs.readdir(Path)
   let ret = []
@@ -38,8 +50,8 @@ async function dynamicReloadRoute(baseDir, filepath, event, context, _routeTree)
   let tree = _routeTree
   let curPath = baseDir
   for (let i = 0; i < route2file.length - 1; i++) {
-    let childName = route2file[i]
-    curPath = path.resolve(curPath, childName)
+    let childName = dirNameProcessor(route2file[i])
+    curPath = path.resolve(curPath, route2file[i])
     if (tree.childs[childName] === undefined) //Add event, just use LoadRouter to load it
     {
       let [subRouter, subTree] = await LoadRouter(curPath, context)
@@ -55,13 +67,9 @@ async function dynamicReloadRoute(baseDir, filepath, event, context, _routeTree)
   }
   let fileName = route2file[route2file.length - 1]
   hotSwapping.cleanRequireCache(filepath)
-  let subRouter
-  if (!fs.existsSync(filepath)) //route file is deleted
-  {
-    subRouter = express.Router()
-  } else {
-    subRouter = require(filepath)(context)
-  }
+  let subRouter = getRouterInstance()
+  if (fs.existsSync(filepath)) //if route file is deleted just use an empty one
+    require(filepath)(subRouter, context)
   if (fileName === 'index.js') { //need to reload depth 1 childs
     tree.root = subRouter
     for (let name in tree.processor) {
@@ -70,7 +78,6 @@ async function dynamicReloadRoute(baseDir, filepath, event, context, _routeTree)
           return tree.processor[name](req, res, next)
         })
       })(name)
-
     }
     for (let name in tree.childs) {
       ((name) => {
@@ -78,16 +85,15 @@ async function dynamicReloadRoute(baseDir, filepath, event, context, _routeTree)
           return tree.childs[name].root(req, res, next)
         })
       })(name)
-
     }
   } else {
-    if (tree.processor[fileName] === undefined) { //newfile, need to call router.use
+    if (tree.processor[fileName] === undefined) { //only when new file will reach here, need to call router.use
       tree.processor[fileName] = subRouter
       tree.root.use('/', (req, res, next) => {
         return tree.processor[fileName](req, res, next)
       })
     } else {
-      tree.processor[fileName] = subRouter //no need to call router.use as we use closure
+      tree.processor[fileName] = subRouter //no need to call router.use as we use closure. If file is deleted, also need to replace it with an empty router
     }
   }
 }
@@ -117,15 +123,14 @@ async function LoadRouter(BasePath, context) {
     processor: {},
     childs: {}
   }
-  let baseRouter
+  let baseRouter = getRouterInstance()
   if (files.find((e) => e === 'index.js') !== undefined) {
-    baseRouter = require(path.resolve(BasePath, 'index.js'))(context)
-  } else {
-    baseRouter = express.Router()
+    require(path.resolve(BasePath, 'index.js'))(baseRouter, context)
   }
   tree.root = baseRouter
   files.filter(e => path.extname(e) === '.js' && e !== 'index.js').forEach(e => {
-    let subRouter = require(path.resolve(BasePath, e))(context)
+    let subRouter = getRouterInstance()
+    require(path.resolve(BasePath, e))(subRouter, context)
     tree.processor[e] = subRouter
     if (EnableHotSwapping) {
       baseRouter.use('/', (req, res, next) => {
@@ -134,19 +139,18 @@ async function LoadRouter(BasePath, context) {
     } else {
       baseRouter.use('/', tree.processor[e])
     }
-
-
   })
   let promises = dirs.map(e => {
     return LoadRouter(path.resolve(BasePath, e), context).then(subRet => {
       let [subRouter, subTree] = subRet
-      tree.childs[e] = subTree
+      let childName = dirNameProcessor(e)
+      tree.childs[childName] = subTree
       if (EnableHotSwapping) {
-        baseRouter.use(`/${e}/`, (req, res, next) => {
-          return tree.childs[e].root(req, res, next) //subRouter = subTree.root
+        baseRouter.use(`/${childName}/`, (req, res, next) => {
+          return tree.childs[childName].root(req, res, next) //subRouter = subTree.root
         })
       } else {
-        baseRouter.use(`/${e}/`, tree.childs[e].root)
+        baseRouter.use(`/${childName}/`, tree.childs[childName].root)
       }
     })
   })
@@ -159,7 +163,7 @@ module.exports = async function (baseDir, context) {
   routeTree = routes[1]
   if (EnableHotSwapping === true)
     await AddHotSwappingForRoutes(baseDir, context, routeTree)
-  let retRouter = express.Router() //Add a router at root to enable /index.js hot swapping
+  let retRouter = getRouterInstance() //Add a router at root to enable /index.js hot swapping
   retRouter.use('/', (req, res, next) => {
     return routeTree.root(req, res, next)
   })

@@ -3,7 +3,7 @@ module.exports = {
     //from http://fex.baidu.com/blog/2015/05/nodejs-hot-swapping/
     var _module = require.cache[modulePath];
     // remove reference in module.parent
-    if(_module === undefined){
+    if(_module === undefined || _module === null){
       return
     }
     if (_module.parent) {
