@@ -12,6 +12,7 @@ module.exports = {
     JWTKEY: ''
   },
   dev: {
-    hotSwap: true
+    hotSwap: true,
+    showDBLog: true
   }
 }

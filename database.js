@@ -6,7 +6,7 @@ const hotSwapping = require('./hotSwapping')
 let sequelize;
 let definations;
 let models;
-
+let Logger = ()=>{};
 function ConnectDB({
   db_name,
   username,
@@ -15,7 +15,8 @@ function ConnectDB({
 }) {
   return new Sequelize(db_name, username, password, {
     host: host,
-    dialect: 'mysql'
+    dialect: 'mysql',
+    logging: Logger
   })
 }
 async function LoadDefination(dir, _sequelize) {
@@ -80,10 +81,12 @@ function AddHotSwappingForModels(dir, _models, _definations) {
     }
   })
 }
-let exp = async function (Config) {
+module.exports = async function (Config) {
   let DBConfig = Config.database
   if (models !== undefined)
     return models;
+  if(Config.dev.showDBLog === true)
+    Logger = (e) => console.log(e)
   sequelize = ConnectDB(DBConfig)
   definations = await LoadDefination(path.resolve(__dirname, 'Model', 'Defination'), sequelize)
   models = await LoadModel(path.resolve(__dirname, 'Model'), definations)
@@ -91,4 +94,3 @@ let exp = async function (Config) {
     AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definations)
   return models;
 }
-module.exports = exp
