@@ -25,6 +25,6 @@ const path = require('path');
   let app = express()
   app.use('/', router)
   app.listen(Config.server.port, () => {
-    console.info(`Server started at port ${Config.server.port}`)
+    console.info(`Server started at http://localhost:${Config.server.port}${Config.server.prefix || '/'}`)
   })
 })()

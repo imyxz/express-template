@@ -164,7 +164,7 @@ module.exports = async function (baseDir, context) {
   if (EnableHotSwapping === true)
     await AddHotSwappingForRoutes(baseDir, context, routeTree)
   let retRouter = getRouterInstance() //Add a router at root to enable /index.js hot swapping
-  retRouter.use('/', (req, res, next) => {
+  retRouter.use(context.Config.server.prefix || '/', (req, res, next) => {
     return routeTree.root(req, res, next)
   })
   return [retRouter, routeTree]

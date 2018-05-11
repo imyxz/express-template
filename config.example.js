@@ -1,6 +1,7 @@
 module.exports = {
   server:{
-    port: 3876
+    port: 3876,
+    prefix: '/'
   },
   database: {
     username: '',
