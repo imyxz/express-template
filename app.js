@@ -4,12 +4,13 @@ const Router = require('./router')
 const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
+const ConfigLoader = require('./configLoader');
+const hotSwapping = require('./hotSwapping');
 (async function (){
-  let mod = process.argv[2]
-  if(mod === 'development')
-    Config = require('./config.development.js')
-  else if(mod === 'production')
-    Config = require('./config.production.js')
+  Config = ConfigLoader()
+  //expose to global to convenient for require module
+  global._require = hotSwapping._require
+  global.watchRequire = hotSwapping.watchRequire
   const RouterBaseDir = path.resolve(__dirname, 'Route')
   console.info("Loading Models....")
   const Model = await Database(Config);
