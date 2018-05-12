@@ -1,0 +1,11 @@
+{
+  "include": [
+    "Route/**/*",
+    "Model/**/*"
+  ],
+  "typeAcquisition": {
+    "include": [
+      "sequelize"
+    ]
+  }
+}
