@@ -13,10 +13,12 @@ const hotSwapping = require('./hotSwapping');
   global.watchRequire = hotSwapping.watchRequire
   const RouterBaseDir = path.resolve(__dirname, 'Route')
   console.info("Loading Models....")
-  const Model = await Database(Config);
+  const DB = await Database(Config);
   console.info("Done!\n")
   const context = {
-    Model,
+    Model: DB.models,
+    Defination: DB.definations,
+    Sequelize: DB.sequelize,
     Config
   }
   console.info("Loading Routes....")

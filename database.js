@@ -111,5 +111,5 @@ module.exports = async function (Config) {
   models = await LoadModel(path.resolve(__dirname, 'Model'), definations)
   if (Config.dev.hotSwap === true)
     AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definations)
-  return models;
+  return {sequelize, definations, models};
 }
