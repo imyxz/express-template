@@ -49,6 +49,9 @@ async function LoadDefination(dir, _sequelize) {
   await Promise.all(promises).then(xxx => {
     console.info(`Load definations done.`)
   })
+  await _sequelize.sync().then(e => {
+    console.info(`Sync association done.`)
+  })
   return _definations;
 }
 async function LoadModel(dir, _definations) {
