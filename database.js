@@ -42,15 +42,9 @@ async function LoadDefination(dir, _sequelize) {
     console.info(`Loading defination ${name}...`)
     _definations[name] = _sequelize.import(path.resolve(dir, e))
   })
-  let promises = Object.values(_definations).map(e => {
-    return e.sync()
-  })
-  await Promise.all(promises).then(xxx => {
-    console.info(`Load definations done.`)
-  })
   await LoadAssociation(path.resolve(dir, 'Association'), _definations)
   await _sequelize.sync().then(e => {
-    console.info(`Sync association done.`)
+    console.info(`Sync database done.`)
   })
   return _definations;
 }
