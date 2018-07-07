@@ -5,7 +5,15 @@ const chokidar = require('chokidar');
 const hotSwapping = require('./hotSwapping');
 let EnableHotSwapping
 let routeTree
-
+function requireRouter(filepath, ...args) {
+  let router = require(filepath)
+  if(typeof router === "function")
+  {
+    router.apply(null, args)
+  }else{
+    throw new Error('Target router file do not export a function')
+  }
+}
 function getRouterInstance() {
   return express.Router({
     mergeParams: true
@@ -69,7 +77,7 @@ async function dynamicReloadRoute(baseDir, filepath, event, context, _routeTree)
   hotSwapping.cleanRequireCache(filepath)
   let subRouter = getRouterInstance()
   if (fs.existsSync(filepath)) //if route file is deleted just use an empty one
-    require(filepath)(subRouter, context)
+    requireRouter(filepath, subRouter, context)
   if (fileName === 'index.js') { //need to reload depth 1 childs
     tree.root = subRouter
     for (let name in tree.processor) {
@@ -125,12 +133,12 @@ async function LoadRouter(BasePath, context) {
   }
   let baseRouter = getRouterInstance()
   if (files.find((e) => e === 'index.js') !== undefined) {
-    require(path.resolve(BasePath, 'index.js'))(baseRouter, context)
+    requireRouter(path.resolve(BasePath, 'index.js'), baseRouter, context)
   }
   tree.root = baseRouter
   files.filter(e => path.extname(e) === '.js' && e !== 'index.js').forEach(e => {
     let subRouter = getRouterInstance()
-    require(path.resolve(BasePath, e))(subRouter, context)
+    requireRouter(path.resolve(BasePath, e), subRouter, context)
     tree.processor[e] = subRouter
     if (EnableHotSwapping) {
       baseRouter.use('/', (req, res, next) => {
