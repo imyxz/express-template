@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const ConfigLoader = require('./configLoader');
 const hotSwapping = require('./hotSwapping');
+const ExpressAsyncWrapper = require('./ExpressAsyncWrapper');
 (async function (){
   Config = ConfigLoader()
   //expose to global to convenient for require module
@@ -19,7 +20,8 @@ const hotSwapping = require('./hotSwapping');
     Model: DB.models,
     Defination: DB.definations,
     Sequelize: DB.sequelize,
-    Config
+    Config,
+    Wrapper: ExpressAsyncWrapper
   }
   console.info("Loading Routes....")
   let [router, routerTree] = await Router(RouterBaseDir, context)
