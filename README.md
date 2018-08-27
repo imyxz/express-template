@@ -14,7 +14,7 @@ This is a template for express server.
 
 ## Tip
 
-1. Hot swapping currently only support `Route` and `Model`, including `change`, `create` and `delete` files. Hot swapping of defination of tables are not supported yet.
+1. Hot swapping currently only support `Route` and `Model`, including `change`, `create` and `delete` files. Hot swapping of definition of tables are not supported yet.
 
 2. For modules those require in `Route` and `Model` and only export an Object, you could use `watchRequire` to enable hot swapping for the module. Otherwise the loader would not trace the updating of the required module.
 

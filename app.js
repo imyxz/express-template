@@ -18,7 +18,7 @@ const ExpressAsyncWrapper = require('./ExpressAsyncWrapper');
   console.info("Done!\n")
   const context = {
     Model: DB.models,
-    Defination: DB.definations,
+    Definition: DB.definitions,
     Sequelize: DB.sequelize,
     Config,
     Wrapper: ExpressAsyncWrapper
