@@ -20,7 +20,6 @@ function ConnectDB ({ db_name,
 }
 
 async function LoadAssociation (dir, _definitions) {
-  let ret = {}
   let list = await fs.readdir(dir)
   list.filter(e => {
     return path.extname(e) === '.js'

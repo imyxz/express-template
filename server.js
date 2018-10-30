@@ -5,7 +5,6 @@ const Database = require('./database')
 let Config
 const Router = require('./router')
 const express = require('express')
-const fs = require('fs-extra')
 const path = require('path')
 const ConfigLoader = require('./configLoader')
 const ExpressAsyncWrapper = require('./ExpressAsyncWrapper')
