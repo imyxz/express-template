@@ -64,7 +64,7 @@ function resolvePath (filepath) {
     filepath = filepath.substr(1)
     if (filepath.charAt(0) === '/') { filepath = filepath.substr(1) }
     filepath = path.join(filepath)
-    filepath = path.resolve(__dirname, filepath)
+    filepath = path.resolve(__dirname, 'src', filepath)
   }
   return require.resolve(filepath)
 }
