@@ -1,6 +1,5 @@
-const hotSwapping = require('./hotSwapping')
-global._require = hotSwapping._require
-global.watchRequire = hotSwapping.watchRequire
+const mockRequire = require('./mock-require')
+global.watchRequire = mockRequire.watchRequire
 const Database = require('./database')
 let Config
 const Router = require('./router')

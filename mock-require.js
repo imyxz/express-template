@@ -1,5 +1,7 @@
 const fs = require('fs-extra')
+const Module = require('module')
 const path = require('path')
+const trueResolveFilename = Module._resolveFilename
 const chokidar = require('chokidar')
 const Config = require('./configLoader')()
 let module_cache = {}
@@ -52,13 +54,6 @@ function watchRequire (modulePath) {
     return module_cache[modulePath]
   } else { return require(modulePath) }
 }
-/**
- * Use to require a module. If first char of the modulePath is ~, it will be repalced with the root directory of the project.
- * @param {string} modulePath 
- */
-function resolveRequire (modulePath) {
-  return require(resolvePath(modulePath))
-}
 function resolvePath (filepath) {
   if (filepath.charAt(0) === '~') {
     filepath = filepath.substr(1)
@@ -68,8 +63,15 @@ function resolvePath (filepath) {
   }
   return require.resolve(filepath)
 }
+// mock require
+Module._resolveFilename = function (request, parent) {
+  if (request.charAt(0) === '~') {
+    return resolvePath(request)
+  } else {
+    return trueResolveFilename.apply(this, arguments)
+  }
+}
 module.exports = {
   cleanRequireCache,
-  watchRequire,
-  _require: resolveRequire
+  watchRequire
 }

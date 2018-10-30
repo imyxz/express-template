@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const fs = require('fs-extra')
 const path = require('path')
 const chokidar = require('chokidar')
-const hotSwapping = require('./hotSwapping')
+const mockRequire = require('./mock-require')
 let sequelize
 let definitions
 let models
@@ -62,7 +62,7 @@ async function LoadModel (dir, _definitions) {
 
 function dynamicReloadModel (modelpath, _models, _definitions) {
   let name = path.basename(modelpath, '.js')
-  hotSwapping.cleanRequireCache(modelpath)
+  mockRequire.cleanRequireCache(modelpath)
   if (fs.existsSync(modelpath)) {
     let factory = require(modelpath)
     let model = factory(_definitions)

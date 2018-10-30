@@ -2,7 +2,7 @@ const express = require('express')
 const fs = require('fs-extra')
 const path = require('path')
 const chokidar = require('chokidar')
-const hotSwapping = require('./hotSwapping')
+const mockRequire = require('./mock-require')
 let EnableHotSwapping
 let routeTree
 function requireRouter (filepath, ...args) {
@@ -71,7 +71,7 @@ async function dynamicReloadRoute (baseDir, filepath, event, context, _routeTree
     tree = tree.childs[childName]
   }
   let fileName = route2file[route2file.length - 1]
-  hotSwapping.cleanRequireCache(filepath)
+  mockRequire.cleanRequireCache(filepath)
   let subRouter = getRouterInstance()
   if (fs.existsSync(filepath)) { // if route file is deleted just use an empty one
     requireRouter(filepath, subRouter, context)
