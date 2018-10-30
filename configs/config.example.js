@@ -1,7 +1,8 @@
 module.exports = {
   server: {
     port: 3876,
-    prefix: '/'
+    prefix: '/',
+    route_dir: 'src/Route'
   },
   database: {
     username: '',

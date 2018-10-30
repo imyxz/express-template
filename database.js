@@ -96,9 +96,9 @@ module.exports = async function (Config) {
   if (models !== undefined) { return models }
   if (Config.dev.showDBLog === true) { Logger = (e) => console.log(e) }
   sequelize = ConnectDB(DBConfig)
-  definitions = await LoadDefinition(path.resolve(__dirname, 'Model', 'Definition'), sequelize)
-  models = await LoadModel(path.resolve(__dirname, 'Model'), definitions)
-  if (Config.dev.hotSwap === true) { AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definitions) }
+  definitions = await LoadDefinition(path.resolve(__dirname, 'src', 'Model', 'Definition'), sequelize)
+  models = await LoadModel(path.resolve(__dirname, 'src', 'Model'), definitions)
+  if (Config.dev.hotSwap === true) { AddHotSwappingForModels(path.resolve(__dirname, 'src', 'Model'), models, definitions) }
   return {
     sequelize, definitions, models
   }

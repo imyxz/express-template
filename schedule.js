@@ -70,7 +70,7 @@ async function runner (schedule) {
   schedule.running = false
 }
 module.exports = async function (context) {
-  let schedules = await LoadSchedule(path.resolve(__dirname, 'Schedule'), context)
+  let schedules = await LoadSchedule(path.resolve(__dirname, 'src', 'Schedule'), context)
   console.log('Scheduler started!')
   await scheduler(schedules)
 }
