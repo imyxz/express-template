@@ -1,19 +1,17 @@
 const Sequelize = require('sequelize')
 const fs = require('fs-extra')
-const path = require('path');
-const chokidar = require('chokidar');
+const path = require('path')
+const chokidar = require('chokidar')
 const hotSwapping = require('./hotSwapping')
-let sequelize;
-let definitions;
-let models;
-let Logger = () => {};
+let sequelize
+let definitions
+let models
+let Logger = () => {}
 
-function ConnectDB({
-  db_name,
+function ConnectDB ({ db_name,
   username,
   password,
-  host
-}) {
+  host }) {
   return new Sequelize(db_name, username, password, {
     host: host,
     dialect: 'mysql',
@@ -21,18 +19,18 @@ function ConnectDB({
   })
 }
 
-async function LoadAssociation(dir, _definitions) {
+async function LoadAssociation (dir, _definitions) {
   let ret = {}
   let list = await fs.readdir(dir)
   list.filter(e => {
     return path.extname(e) === '.js'
   }).forEach(e => {
-    let func = require(path.resolve(dir, e));
+    let func = require(path.resolve(dir, e))
     func(_definitions)
     console.info(`Load association in ${path.basename(e)} done.`)
   })
 }
-async function LoadDefinition(dir, _sequelize) {
+async function LoadDefinition (dir, _sequelize) {
   let _definitions = {}
   let list = await fs.readdir(dir)
   list.filter(e => {
@@ -44,11 +42,11 @@ async function LoadDefinition(dir, _sequelize) {
   })
   await LoadAssociation(path.resolve(dir, 'Association'), _definitions)
   await _sequelize.sync().then(e => {
-    console.info(`Sync database done.`)
+    console.info('Sync database done.')
   })
-  return _definitions;
+  return _definitions
 }
-async function LoadModel(dir, _definitions) {
+async function LoadModel (dir, _definitions) {
   let ret = {}
   let list = await fs.readdir(dir)
   list.filter(e => {
@@ -60,10 +58,10 @@ async function LoadModel(dir, _definitions) {
 
     console.info(`Load model ${name} done.`)
   })
-  return ret;
+  return ret
 }
 
-function dynamicReloadModel(modelpath, _models, _definitions) {
+function dynamicReloadModel (modelpath, _models, _definitions) {
   let name = path.basename(modelpath, '.js')
   hotSwapping.cleanRequireCache(modelpath)
   if (fs.existsSync(modelpath)) {
@@ -75,7 +73,7 @@ function dynamicReloadModel(modelpath, _models, _definitions) {
   }
 }
 
-function AddHotSwappingForModels(dir, _models, _definitions) {
+function AddHotSwappingForModels (dir, _models, _definitions) {
   let watcher = chokidar.watch(dir, {
     persistent: true,
     ignoreInitial: true,
@@ -96,14 +94,13 @@ function AddHotSwappingForModels(dir, _models, _definitions) {
 }
 module.exports = async function (Config) {
   let DBConfig = Config.database
-  if (models !== undefined)
-    return models;
-  if (Config.dev.showDBLog === true)
-    Logger = (e) => console.log(e)
+  if (models !== undefined) { return models }
+  if (Config.dev.showDBLog === true) { Logger = (e) => console.log(e) }
   sequelize = ConnectDB(DBConfig)
   definitions = await LoadDefinition(path.resolve(__dirname, 'Model', 'Definition'), sequelize)
   models = await LoadModel(path.resolve(__dirname, 'Model'), definitions)
-  if (Config.dev.hotSwap === true)
-    AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definitions)
-  return {sequelize, definitions, models};
+  if (Config.dev.hotSwap === true) { AddHotSwappingForModels(path.resolve(__dirname, 'Model'), models, definitions) }
+  return {
+    sequelize, definitions, models
+  }
 }

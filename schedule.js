@@ -1,12 +1,6 @@
-const Sequelize = require('sequelize')
 const fs = require('fs-extra')
 const path = require('path')
-const chokidar = require('chokidar')
-const hotSwapping = require('./hotSwapping')
 const moment = require('moment')
-let sequelize
-let definitions
-let models
 async function LoadSchedule (dir, context) {
   let ret = []
   let list = await fs.readdir(dir)

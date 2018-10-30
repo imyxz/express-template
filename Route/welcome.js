@@ -1,5 +1,5 @@
-const example = watchRequire('~/Module/example');
-module.exports = (router, {Model, Config, Wrapper}) => {
+const example = watchRequire('~/Module/example')
+module.exports = (router, { Model, Config, Wrapper }) => {
   router.get('/', (req, res) => {
     res.send(example.say)
   })

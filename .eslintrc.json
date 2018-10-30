@@ -1,0 +1,63 @@
+{
+    "env": {
+        "node": true,
+        "jest/globals": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module"
+    },
+    "extends": "standard",
+    "plugins": [
+        "standard",
+        "jest"
+    ],
+    "rules": {
+        "indent": 2,
+        "semi": 2,
+        "no-underscore-dangle": "off",
+        "camelcase": "off",
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "prefer-destructuring": ["error", {
+            "array": false,
+            "object": false
+        }],
+        "space-unary-ops": [
+            2, {
+                "words": true,
+                "nonwords": false,
+                "overrides": {
+                    "new": false,
+                    "++": true
+                }
+            }
+        ],
+
+        "no-multiple-empty-lines": ["error", {
+            "max": 2
+        }],
+        "max-lines": "error",
+        "object-curly-spacing": ["error", "always"],
+        "object-curly-newline": ["error", {
+            "ObjectExpression": {
+                "consistent": true,
+                "multiline": true,
+                "minProperties": 3
+            },
+            "ObjectPattern": {
+                "multiline": false
+            }
+        }],
+        "no-unused-vars": ["warn"],
+        "no-trailing-spaces": ["error", {
+            "ignoreComments": true
+        }]
+    },
+    "globals": {
+        "watchRequire": true
+    }
+
+}
