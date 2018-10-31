@@ -3,7 +3,7 @@ const Module = require('module')
 const path = require('path')
 const trueResolveFilename = Module._resolveFilename
 const chokidar = require('chokidar')
-const Config = require('./configLoader')()
+const Config = require('./config-loader')()
 let module_cache = {}
 
 function cleanRequireCache (modulePath) {
@@ -55,17 +55,22 @@ function watchRequire (modulePath) {
   } else { return require(modulePath) }
 }
 function resolvePath (filepath) {
-  if (filepath.charAt(0) === '~') {
+  const firstChar = filepath.charAt(0)
+  if (firstChar === '~' || firstChar === '@') {
     filepath = filepath.substr(1)
     if (filepath.charAt(0) === '/') { filepath = filepath.substr(1) }
     filepath = path.join(filepath)
-    filepath = path.resolve(__dirname, 'src', filepath)
+    if (firstChar === '~') {
+      filepath = path.resolve(__dirname, 'src', filepath)
+    } else {
+      filepath = path.resolve(__dirname, filepath)
+    }
   }
   return require.resolve(filepath)
 }
 // mock require
 Module._resolveFilename = function (request, parent) {
-  if (request.charAt(0) === '~') {
+  if (request.charAt(0) === '~' || request.charAt(0) === '@') {
     return resolvePath(request)
   } else {
     return trueResolveFilename.apply(this, arguments)

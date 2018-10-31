@@ -5,8 +5,8 @@ let Config
 const Router = require('./router')
 const express = require('express')
 const path = require('path')
-const ConfigLoader = require('./configLoader')
-const ExpressAsyncWrapper = require('./ExpressAsyncWrapper')
+const ConfigLoader = require('./config-loader')
+const ExpressAsyncWrapper = require('./express-async-wrapper')
 module.exports = async function (loadroutes = true) {
   Config = ConfigLoader()
   // expose to global to convenient for require module
