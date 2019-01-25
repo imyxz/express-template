@@ -7,7 +7,7 @@ let EnableHotSwapping
 let routeTree
 function requireRouter (filepath, ...args) {
   let router = require(filepath)
-  if (typeof router === 'function') {
+  if ((typeof router) === 'function') {
     router.apply(null, args)
   } else {
     throw new Error('Target router file do not export a function')
@@ -73,9 +73,8 @@ async function dynamicReloadRoute (baseDir, filepath, event, context, _routeTree
   let fileName = route2file[route2file.length - 1]
   mockRequire.cleanRequireCache(filepath)
   let subRouter = getRouterInstance()
-  if (fs.existsSync(filepath)) { // if route file is deleted just use an empty one
-    requireRouter(filepath, subRouter, context)
-  }
+  if (fs.existsSync(filepath)) { requireRouter(filepath, subRouter, context) } // if route file is deleted just use an empty one
+
   if (fileName === 'index.js') { // need to reload depth 1 childs
     tree.root = subRouter
     for (let name in tree.processor) {

@@ -1,5 +1,5 @@
 const server = require('./server')
-const Config = require('./config-loader')();
+const Config = require('./core/config-loader')();
 (async () => {
   let { app } = await server()
   app.listen(Config.server.port, () => {

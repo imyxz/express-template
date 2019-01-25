@@ -1,6 +1,12 @@
+const Sequelize = require('sequelize')
 const fs = require('fs-extra')
 const path = require('path')
+const chokidar = require('chokidar')
+const mockRequire = require('./mock-require')
 const moment = require('moment')
+let sequelize
+let definitions
+let models
 async function LoadSchedule (dir, context) {
   let ret = []
   let list = await fs.readdir(dir)
@@ -70,7 +76,7 @@ async function runner (schedule) {
   schedule.running = false
 }
 module.exports = async function (context) {
-  let schedules = await LoadSchedule(path.resolve(__dirname, 'src', 'Schedule'), context)
+  let schedules = await LoadSchedule(path.resolve(__dirname, '../src', 'Schedule'), context)
   console.log('Scheduler started!')
   await scheduler(schedules)
 }

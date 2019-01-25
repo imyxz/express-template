@@ -61,9 +61,9 @@ function resolvePath (filepath) {
     if (filepath.charAt(0) === '/') { filepath = filepath.substr(1) }
     filepath = path.join(filepath)
     if (firstChar === '~') {
-      filepath = path.resolve(__dirname, 'src', filepath)
+      filepath = path.resolve(__dirname, '../src', filepath)
     } else {
-      filepath = path.resolve(__dirname, filepath)
+      filepath = path.resolve(__dirname, '../', filepath)
     }
   }
   return require.resolve(filepath)
@@ -76,6 +76,7 @@ Module._resolveFilename = function (request, parent) {
     return trueResolveFilename.apply(this, arguments)
   }
 }
+
 module.exports = {
   cleanRequireCache,
   watchRequire

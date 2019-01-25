@@ -1,5 +1,5 @@
 const mods = {
-  'development': './configs/config.development.js'
+  'development': '../configs/config.development.js'
 }
 const env = {
 
